@@ -2,7 +2,6 @@
 
 from distutils.core import setup
 
-# XXX depend on boto
 setup(
 		name="django-url-imaging",
 		version="0.1",
@@ -10,5 +9,5 @@ setup(
 		author="Patrick Carroll",
 		author_email="patrick@patrickomatic.com",
 		url="http://urlimg.com/opensource",
-		packages=[])
+		packages=['boto'])
 
