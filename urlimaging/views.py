@@ -2,7 +2,7 @@ import sys, unicodedata
 from django.http import Http404, HttpResponseRedirect
 from django.conf import settings
 
-from urlimg.image.models import *
+from urlimaging.image.models import *
 
 
 LATIN_ASCII_MAP = { 

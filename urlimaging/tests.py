@@ -2,8 +2,8 @@ import sys, datetime, mox
 from django.core import mail
 from django.test import TestCase
 from django.test.client import Client
-from urlimg.image.models import *
-from urlimg.image.validator import *
+from urlimaging.image.models import *
+from urlimaging.image.validator import *
 import boto.s3.key
 
 

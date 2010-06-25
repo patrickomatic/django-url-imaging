@@ -1,8 +1,8 @@
 import re, os
 from math import atan, degrees
 from PIL import Image, ImageChops, ImageFilter, ImageDraw, ImageFont
-from urlimg.image.validator import *
-import urlimg.settings
+from urlimaging.image.validator import *
+import urlimaging.settings
 
 TEN_MBS = 10 * 1024 * 1024 * 1024
 RGB_ONLY_FORMATS = set(['.jpg', '.jpeg'])

@@ -9,5 +9,6 @@ setup(
 		author="Patrick Carroll",
 		author_email="patrick@patrickomatic.com",
 		url="http://urlimg.com/opensource",
-		packages=['boto'])
+		packages=['urlimaging'],
+		depends=['boto', 'django'])
 
