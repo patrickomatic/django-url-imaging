@@ -1,4 +1,4 @@
-django-url-imaging provides a URL-based image processing feature for Django
+django-url-imaging provides URL-based image processing functionality for Django
 projects
 
 ====
