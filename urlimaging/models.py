@@ -7,7 +7,7 @@ from django.db.models import F
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key, S3DataError
 
-from urlimaging.image.image import *
+from urlimaging.image import *
 
 
 FREE_BYTES = 50 * 1024 * 1024

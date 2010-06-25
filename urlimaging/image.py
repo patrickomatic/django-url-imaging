@@ -1,8 +1,7 @@
 import re, os
 from math import atan, degrees
 from PIL import Image, ImageChops, ImageFilter, ImageDraw, ImageFont
-from urlimaging.image.validator import *
-import urlimaging.settings
+from urlimaging.validator import *
 
 TEN_MBS = 10 * 1024 * 1024 * 1024
 RGB_ONLY_FORMATS = set(['.jpg', '.jpeg'])
@@ -182,7 +181,7 @@ COMMANDS = [ {
 		'title': 'Resize',
 		'anchor_name': 'resize',
 		'description': 'Resize an image.',
-		'format': '<tt>http://urlimg.com/resize/WIDTHxHEIGHT/IMAGEURL</tt>',
+		'format': '<tt>/resize/WIDTHxHEIGHT/IMAGEURL</tt>',
 		'arguments': [ 
 			('WIDTHxHEIGHT', 'The width and height of the desired image. Expressed as a width and height specification of the form WIDTHxHEIGHT where WIDTH and HEIGHT are both positive numbers.') 
 		],
@@ -192,7 +191,7 @@ COMMANDS = [ {
 		'title': 'Scale',
 		'anchor_name': 'scale',
 		'description': 'Scale an image proportionally by a given percentage',
-		'format': '<tt>http://urlimg.com/scale/PERCENT/IMAGEURL</tt>',
+		'format': '<tt>/scale/PERCENT/IMAGEURL</tt>',
 		'arguments': [ 
 			('PERCENT', 'A value between 0 and 1000 by which to scale the image.  If greater than 100, the image will be increased in size by that percentage amount.') 
 		],
@@ -202,7 +201,7 @@ COMMANDS = [ {
 		'title': 'Width',
 		'anchor_name': 'width',
 		'description': 'Scale an image proportionaly to the given width',
-		'format': '<tt>http://urlimg.com/width/SIZE/IMAGEURL</tt>',
+		'format': '<tt>/width/SIZE/IMAGEURL</tt>',
 		'arguments': [ ('SIZE', 'A positive number specifying the target width of the image.') ],
 	}, {
 		'regex': re.compile(r'^height/(\d+)/', re.I),
@@ -210,7 +209,7 @@ COMMANDS = [ {
 		'title': 'Height',
 		'anchor_name': 'height',
 		'description': 'Scale an image proportionaly to the given height',
-		'format': '<tt>http://urlimg.com/height/SIZE/IMAGEURL</tt>',
+		'format': '<tt>/height/SIZE/IMAGEURL</tt>',
 		'arguments': [ 
 			('SIZE', 'A positive number specifying the target height of the image.') 
 		],
@@ -220,7 +219,7 @@ COMMANDS = [ {
 		'title': 'Fit',
 		'anchor_name': 'fit',
 		'description': 'Fit an image proportionally to be within a given size',
-		'format': '<tt>http://urlimg.com/fit/WIDTHxHEIGHT/IMAGEURL</tt>',
+		'format': '<tt>/fit/WIDTHxHEIGHT/IMAGEURL</tt>',
 		'arguments': [ 
 			('WIDTHxHEIGHT', 'The box that the image must be resized to fit into. Expressed as a width and height specification of the form WIDTHxHEIGHT where WIDTH and HEIGHT are both positive numbers.') 
 		],
@@ -230,9 +229,9 @@ COMMANDS = [ {
 		'title': 'Thumbnail',
 		'anchor_name': 'thumbnail',
 		'description': 'Create a thumbnail of an image',
-		'format': """<tt>http://urlimg.com/thumbnail/SIZE/IMAGEURL</tt>
+		'format': """<tt>/thumbnail/SIZE/IMAGEURL</tt>
 				or a shorter version:
-			     <tt>http://urlimg.com/thumb/SIZE/IMAGEURL</tt>""",
+			     <tt>/thumb/SIZE/IMAGEURL</tt>""",
 		'arguments': [ ('SIZE', 'A number of pixels or a value of either "small" (64 pixels), "medium" (96 pixels) or "large" (128).') ],
 	}, {
 		'regex': re.compile(r'^square/(\d+)/', re.I),
@@ -240,7 +239,7 @@ COMMANDS = [ {
 		'title': 'Square',
 		'anchor_name': 'square',
 		'description': 'Create a squared version of an image.  This will resize and crop an image to create a squared version with the height and width given.',
-		'format': '<tt>http://urlimg.com/square/SIZE/IMAGEURL</tt>',
+		'format': '<tt>/square/SIZE/IMAGEURL</tt>',
 		'arguments': [ 
 			('SIZE', 'The height and width of the desired square'), 
 		],
@@ -250,7 +249,7 @@ COMMANDS = [ {
 		'title': 'Rotate',
 		'anchor_name': 'rotate',
 		'description': 'Rotate an image',
-		'format': '<tt>http://urlimg.com/rotate/DEGREES/IMAGEURL</tt>',
+		'format': '<tt>/rotate/DEGREES/IMAGEURL</tt>',
 		'arguments': [ 
 			('DEGREES', 'A value specifying the number of degrees that the image is to be rotated in a clockwise direction.  A negative number will rotate the image in a counter-clockwise direction.') 
 		],
@@ -260,7 +259,7 @@ COMMANDS = [ {
 		'title': 'Crop',
 		'anchor_name': 'crop',
 		'description': 'Select a rectangular region of an image and remove everything outside of that region.',
-		'format': '<tt>http://urlimg.com/crop/CORNER-X,CORNER-Y,WIDTHxHEIGHT/IMAGEURL</tt>',
+		'format': '<tt>/crop/CORNER-X,CORNER-Y,WIDTHxHEIGHT/IMAGEURL</tt>',
 		'arguments': [ 
 			('CORNER-X', 'The x coordinate of the bottom left corner of the rectangle to be cropped.'),
 			('CORNER-Y', 'The y coordinate of the bottom left corner of the rectangle to be cropped.'),
@@ -273,7 +272,7 @@ COMMANDS = [ {
 		'title': 'Watermark',
 		'anchor_name': 'watermark',
 		'description': 'Overlay some text on the image',
-		'format': '<tt>http://urlimg.com/wm/TEXT/IMAGEURL</tt> or <tt>http://urlimg.com/watermark/TEXT/IMAGEURL</tt>',
+		'format': '<tt>/wm/TEXT/IMAGEURL</tt> or <tt>/watermark/TEXT/IMAGEURL</tt>',
 		'arguments': [ 
 			('TEXT', 'The text of the watermark.'),
 		],
@@ -284,7 +283,7 @@ COMMANDS = [ {
 		'title': 'Black & White',
 		'anchor_name': 'blackwhite',
 		'description': 'Convert the image to black and white',
-		'format': '<tt>http://urlimg.com/bw/IMAGEURL</tt> or <tt>http://urlimg.com/blackwhite/IMAGEURL</tt>',
+		'format': '<tt>/bw/IMAGEURL</tt> or <tt>/blackwhite/IMAGEURL</tt>',
 		'arguments': [ ],
 	}, {
 		'regex': re.compile(r'^invert/', re.I),
@@ -292,7 +291,7 @@ COMMANDS = [ {
 		'title': 'Invert',
 		'anchor_name': 'invert',
 		'description': 'Invert the color profile of the image',
-		'format': '<tt>http://urlimg.com/invert/IMAGEURL</tt>',
+		'format': '<tt>/invert/IMAGEURL</tt>',
 		'arguments': [ ],
 	}, {
 		'regex': re.compile(r'^blur/', re.I),
@@ -300,7 +299,7 @@ COMMANDS = [ {
 		'title': 'Blur',
 		'anchor_name': 'blur',
 		'description': 'Apply a blurring filter to the image',
-		'format': '<tt>http://urlimg.com/blur/IMAGEURL</tt>',
+		'format': '<tt>/blur/IMAGEURL</tt>',
 		'arguments': [ ],
 	}, {
 		'regex': re.compile(r'^sharpen/', re.I),
@@ -308,7 +307,7 @@ COMMANDS = [ {
 		'title': 'Sharpen',
 		'anchor_name': 'sharpen',
 		'description': 'Apply a sharpening filter to the image',
-		'format': '<tt>http://urlimg.com/sharpen/IMAGEURL</tt>',
+		'format': '<tt>/sharpen/IMAGEURL</tt>',
 		'arguments': [ ],
 	}, {
 		'regex': re.compile(r'^convert/\.?(bmp|gif|im|jpe?g|msp|pcx|pdf|png|ppm|tiff|xbm)/', re.I),
@@ -316,7 +315,7 @@ COMMANDS = [ {
 		'title': 'Convert',
 		'anchor_name': 'convert',
 		'description': 'Convert the image to a different format',
-		'format': '<tt>http://urlimg.com/convert/FORMAT/IMAGEURL</tt>',
+		'format': '<tt>/convert/FORMAT/IMAGEURL</tt>',
 		'arguments': [ 
 			('FORMAT', 'The desired image format of the created image.  Allowable values are: bmp, gif, im, jpeg/jpg, msp, pcx, pdf, png, ppm, tiff, xbm')
 		],

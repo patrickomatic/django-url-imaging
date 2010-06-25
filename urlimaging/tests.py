@@ -2,8 +2,8 @@ import sys, datetime, mox
 from django.core import mail
 from django.test import TestCase
 from django.test.client import Client
-from urlimaging.image.models import *
-from urlimaging.image.validator import *
+from urlimaging.models import *
+from urlimaging.validator import *
 import boto.s3.key
 
 
@@ -199,25 +199,6 @@ class CommandRunnerTest(TestCase):
 
 		self.mox.VerifyAll()
 
-	def test_run_commands__over_quota(self):
-		self.site.usage = 60 * 1024 * 1024 * 1024
-		self.site.save()
-
-		cr = CommandRunner()
-		cr.parse_url('resize/50x50/' + GOOD_IMAGE)
-		self.assert_(cr.todo)
-		self.assertRaises(OverQuotaException, cr.run_commands)
-		
-	def test_run_commands__suspended(self):
-		self.site.disabled = True
-		self.site.save()
-
-		cr = CommandRunner()
-		cr.parse_url('resize/50x50/' + GOOD_IMAGE)
-		self.assert_(cr.todo)
-
-		self.assertRaises(SiteSuspendedException, cr.run_commands)
-
 	def test_run_commands__404(self):
 		cr = CommandRunner()
 		cr.parse_url('resize/50x50/patrickomatic.com/afdshkfdsa.html')
@@ -238,8 +219,7 @@ class CommandRunnerTest(TestCase):
 		image.last_modified = None
 		image.save()
 
-		hash, usage_before, cumulative_usage_before = \
-						image.hash, self.site.usage, self.site.cumulative_usage
+		hash = image.hash
 
 		cr = CommandRunner()
 		cr.parse_url(image.get_absolute_url()[1:])
@@ -247,34 +227,6 @@ class CommandRunnerTest(TestCase):
 		self.assert_(cr.run_commands())
 
 		image = ModifiedImage.objects.get(hash=hash)
-		site = Site.objects.get(id=1)
-		self.assert_(site.cumulative_usage == cumulative_usage_before + image.size)
-		self.assert_(site.usage == usage_before)
-
-	def test_run_commands__protected(self):
-		user = User.objects.create_user('patrick', 'patrick@patrickomatic.com', 'testpass')
-		self.site.is_protected = True
-		self.site.user = user
-		self.site.save()
-
-		cr = CommandRunner()
-		cr.parse_url('resize/50x50/patrickomatic.com/test.jpg')
-
-		self.assert_(cr.todo)
-		self.assert_(cr.run_commands(user))
-
-	def test_run_commands__protected_not_logged_in(self):
-		user = User.objects.create_user('patrick', 'patrick@patrickomatic.com', 'testpass')
-		self.site.is_protected = True
-		self.site.user = user
-		self.site.save()
-
-		cr = CommandRunner()
-		cr.parse_url('resize/50x50/patrickomatic.com/test.jpg')
-
-		self.assert_(cr.todo)
-		self.assertRaises(ProtectedException, cr.run_commands)
-
 
 	def __mock_s3(self):
 		self.mox.StubOutWithMock(boto.s3.key, '__init__')
@@ -460,90 +412,6 @@ class ImageModelsTest(TestCase):
 		self.assert_(times_called[0] == 3)
 
 
-class SiteTest(TestCase):
-	fixtures = ['image']
-
-	def setUp(self):
-		self.site = Site.objects.get(domain_name='patrickomatic.com')
-
-
-	def test_get_account_url(self):
-		self.assert_('/account/sites/patrickomatic.com/' == self.site.get_account_url())
-
-	def test_usage_percent(self):
-		self.site.usage = 5 * 1024 * 1024
-		self.assert_(10 == self.site.usage_percent())
-		self.site.usage = 50 * 1024 * 1024
-		self.assert_(100 == self.site.usage_percent())
-
-	def test_usage_percent_left(self):
-		self.site.usage = 5 * 1024 * 1024
-		self.assert_(90 == self.site.usage_percent_left())
-
-	def test_cumulative_usage_percent(self):
-		self.site.cumulative_usage = 5 * 1024 * 1024
-		self.assert_(10 == self.site.cumulative_usage_percent())
-		self.site.cumulative_usage = 50 * 1024 * 1024
-		self.assert_(100 == self.site.cumulative_usage_percent())
-
-	def test_cumulative_usage_percent_left(self):
-		self.site.cumulative_usage = 5 * 1024 * 1024
-		self.assert_(90 == self.site.cumulative_usage_percent_left())
-
-	def test_has_space(self):
-		self.site.usage = 1024
-		self.assert_(self.site.has_space())
-
-	def test_has_space__over_quota(self):
-		self.site.usage = 1024 * 1024 * 1024 * 1024
-		self.assert_(not self.site.has_space())
-
-	def test_has_space__over_quota_and_advanced(self):
-		self.site.is_free = False
-		self.assert_(self.site.has_space())
-
-	def test_make_invoice_item(self):
-		current_usage, used_this_month = 60 * 1024 * 1024, 100 * 1024 * 1024
-
-		self.site.is_free = False
-		self.site.usage = current_usage
-		self.site.cumulative_usage = used_this_month
-
-		# go back a month
-		d = datetime.datetime.now()
-		m = d.month - 1
-		if m < 1: m = 12
-
-		self.site.cumulative_usage_since = datetime.datetime(d.year, m, 15)
-		item = self.site.make_invoice_item()
-
-		self.assertEquals(self.site.usage, current_usage)
-		self.assertEquals(self.site.cumulative_usage, current_usage)
-		self.assertEquals(item.usage, 50 * 1024 * 1024)
-		self.assertEquals(item.site, self.site)
-
-	def test_make_invoice_item__not_billable(self):
-		current_usage, used_this_month = 20 * 1024 * 1024, 30 * 1024 * 1024
-
-		self.site.is_free = True
-		self.site.usage = current_usage
-		self.site.cumulative_usage = used_this_month
-
-		# go back a month
-		d = datetime.datetime.now()
-		m = d.month - 1
-		if m < 1: m = 12
-
-		self.site.cumulative_usage_since = datetime.datetime(d.year, m, 15)
-		self.assertFalse(self.site.make_invoice_item())
-
-		self.assertEquals(self.site.usage, current_usage)
-		self.assertEquals(self.site.cumulative_usage, current_usage)
-
-	def test_make_invoice_item__not_time(self):
-		self.assertFalse(self.site.make_invoice_item())
-
-
 class ModifiedImageTest(TestCase):
 	fixtures = ['image']
 
@@ -557,26 +425,9 @@ class ModifiedImageTest(TestCase):
 
 	
 	def test_save(self):
-		usage_before = self.image.site.usage
-		cumulative_usage_before = self.image.site.cumulative_usage
 		ModifiedImage(hash='xxx', original_location='/xxx.jpg', operations='resize/50x50', size=500, site=self.image.site).save()
 
-		s = Site.objects.get(id=self.image.site.id)
-		self.assert_(s.usage == usage_before + 500)
-		self.assert_(s.cumulative_usage == cumulative_usage_before + 500)
 		self.assert_(ModifiedImage.objects.get(hash='xxx'))
-
-	def test_save__over_quota(self):
-		self.image.site.usage = 49 * 1024 * 1024
-		usage_before = self.image.site.usage
-		self.image.site.user = User.objects.create_user('patrick', 'patrick@patrickomatic.com', 'testpass')
-		self.image.site.save()
-
-		ModifiedImage(hash='xxx', original_location='/xxx.jpg', operations='resize/50x50', size=2 * 1024 * 1024, site=self.image.site).save()
-
-		self.assert_(Site.objects.get(id=self.image.site.id).usage > usage_before)
-		self.assert_(mail.outbox)
-
 
 	def test_refresh(self):
 		last_id = self.image.id
@@ -585,8 +436,6 @@ class ModifiedImageTest(TestCase):
 
 
 	def test_delete(self):
-		usage_before = self.image.site.usage
-
 		self.mox.StubOutWithMock(boto.s3.key, '__init__')
 		boto.s3.key.Key(mox.IgnoreArg())
 		self.mox.StubOutWithMock(boto.s3.key.Key, 'delete')
@@ -599,7 +448,6 @@ class ModifiedImageTest(TestCase):
 		self.image.delete()
 
 		self.assertRaises(ModifiedImage.DoesNotExist, ModifiedImage.objects.get, id=id)
-		self.assert_(Site.objects.get(id=self.image.site.id).usage < usage_before)
 				
 		self.mox.VerifyAll()
 
