@@ -175,6 +175,69 @@ def watermark(img, text):
 	return img
 
 
+HTML_COLORS = { 
+	'aqua': (0, 255, 255),
+	'cyan': (0, 255, 255),
+	'black': (0, 0, 0),
+	'blue': (0, 0, 255),
+	'fuchsia': (255, 0, 255),
+	'magenta': (255, 0, 255),
+	'gray': (128, 128, 128),
+	'grey': (128, 128, 128),
+	'green': (0, 128, 0),
+	'lime': (0, 255, 0),
+	'maroon': (128, 0, 0),
+	'navy': (0, 0, 128),
+	'olive': (128, 128, 0),
+	'purple': (128, 0, 128),
+	'red': (255, 0, 0),
+	'silver': (192, 192, 192),
+	'teal': (0, 128, 128),
+	'white': (255, 255, 255),
+	'yellow': (255, 255, 0),
+}
+
+def color_to_rgb(color):
+	try:
+		return HTML_COLORS[color.lower()]
+	except KeyError:
+		return None
+
+def hex_to_decimal(h):
+	return int(h, 16)
+
+def hex_to_rgb(hex):
+	""" Convert a hexadecimal triplet to an RGB tuple """
+
+	if hex.startswith("#"):
+		hex = hex[1:]
+
+	try:
+		if len(hex) == 3:
+			hex_triplet = map(lambda x: "%s%s" % (x, x), tuple(hex))
+			return tuple(map(hex_to_decimal, hex_triplet))
+		elif len(hex) == 6:
+			return tuple(map(hex_to_decimal, (hex[0:2], hex[2:4], hex[4:6])))
+	except ValueError:
+		pass
+
+	return None
+
+
+@with_image
+def background(img, color):
+	rgb = hex_to_rgb(color)
+	if not rgb: rgb = color_to_rgb(color)
+	if not rgb: return None
+
+	img = img.convert('RGBA')
+	overlayed = Image.new('RGBA', img.size)
+	overlayed.paste(rgb)
+	overlayed.paste(img, mask=img)
+
+	return overlayed
+
+
 COMMANDS = [ { 
 		'regex': re.compile(r'^resize/(\d+)x(\d+)/', re.I),
 		'fn': resize, 
@@ -319,5 +382,16 @@ COMMANDS = [ {
 		'arguments': [ 
 			('FORMAT', 'The desired image format of the created image.  Allowable values are: bmp, gif, im, jpeg/jpg, msp, pcx, pdf, png, ppm, tiff, xbm')
 		],
-	}, ]
+	}, {
+		'regex': re.compile(r'^background/(\w+)/', re.I),
+		'fn': background, 
+		'title': 'Background',
+		'anchor_name': 'background',
+		'description': 'Set a custom background color.  The image must support transparency.',
+		'format': '<tt>http://urlimg.com/background/FORMAT/IMAGEURL</tt>',
+		'arguments': [ 
+			('FORMAT', 'Either a color (red, green, blue, etc..) or a hexadecimal triplet (#FF00FF).')
+		],
+	}, 
+]
 

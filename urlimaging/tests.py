@@ -465,3 +465,22 @@ class ModifiedImageTest(TestCase):
 	def test_get_absolute_url(self):
 		self.assertEquals('/' + self.image.operations + self.image.site.domain_name \
 				+ self.image.original_location, self.image.get_absolute_url())
+
+class ImageModuleTest(TestCase):
+	def test_color_to_rgb(self):
+		self.assert_(color_to_rgb('red') == (255, 0, 0))
+		self.assert_(color_to_rgb('green') == (0, 128, 0))
+		self.assert_(color_to_rgb('foo') == None)
+
+	def test_hex_to_decimal(self):
+		self.assert_(hex_to_decimal('FF') == 255)
+		self.assert_(hex_to_decimal('0') == 0)
+		self.assert_(hex_to_decimal('CC') == 204)
+
+	
+	def test_hex_to_rgb(self):
+		self.assert_(hex_to_rgb('#FF00CC') == (255, 0, 204))
+		self.assert_(hex_to_rgb('000080') == (0, 0, 128))
+		self.assert_(hex_to_rgb('0CF') == (0, 204, 255))
+		self.assert_(hex_to_rgb('#0CF') == (0, 204, 255))
+		self.assert_(hex_to_rgb('#fooooooo') == None)
