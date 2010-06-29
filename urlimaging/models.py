@@ -172,7 +172,9 @@ class CommandRunner:
 			# requesting host down?
 			return False
 
-		if not remote.info().getheader('content-type').lower().startswith('image/'):
+		content_type = remote.info().getheader('content-type').lower()
+		if not content_type.startswith('image/') \
+				and not content_type.endswith("/octet-stream"):
 			remote.close()
 			raise ImageNotFoundException()
 
