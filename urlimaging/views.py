@@ -38,7 +38,7 @@ def latin1_to_ascii(uni):
 def modify(request, url):
 	cr = CommandRunner(latin1_to_ascii(url))
 
-	if IMAGE_WHITELIST_FN in settings and not IMAGE_WHITELIST_FN(domain_name(cr.url)):
+	if not settings.IMAGE_WHITELIST_FN(domain_name(cr.url)):
 		raise Http404	
 
 	try:
