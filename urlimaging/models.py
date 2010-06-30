@@ -1,4 +1,4 @@
-import urllib, urllib2, os, hashlib, re, sys, datetime
+import urllib, urllib2, os, hashlib, re, datetime
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models

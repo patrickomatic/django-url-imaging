@@ -32,4 +32,7 @@ for setting in settings.IMAGE_STORAGE.get_required_settings():
 	except AttributeError:
 		raise ImproperlyConfigured("You must set %s in your settings.py" % setting)
 	
-# XXX set up IMAGE_WHITELIST_FN
+try:
+	getattr(settings, 'IMAGE_WHITELIST_FN')
+except AttributeError:
+	settings.IMAGE_WHITELIST_FN = lambda url: settings.MEDIA_URL in url

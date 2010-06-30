@@ -86,6 +86,7 @@ class LocalImageStorage(ImageStorage):
 		shutil.copyfile(filename, os.path.join(self.get_storage_dir(), hash))
 
 	def get_image_url(self, hash):
+		# XXX check for a setting
 		return settings.MEDIA_URL + "/" + hash
 
 	def get_required_settings(self):
