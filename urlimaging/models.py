@@ -219,5 +219,3 @@ class CommandRunner:
 		image.save()
 
 		return settings.IMAGE_STORAGE.get_image_url(self.hash)
-
-
