@@ -1,20 +1,10 @@
-import urllib, urllib2, os, hashlib, re, sys, datetime, time
+import urllib, urllib2, os, hashlib, re, sys, datetime
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import F
 
-from boto.s3.connection import S3Connection
-from boto.s3.key import Key, S3DataError
-
 from urlimaging.image import *
-
-
-FREE_BYTES = 50 * 1024 * 1024
-
-# XXX move into __init.py__
-conn = S3Connection(settings.AWS_ACCESS_KEY_ID, settings.AWS_SECRET_ACCESS_KEY)
-bucket = conn.get_bucket(settings.S3_BUCKET)
 
 
 def domain_name(url):
@@ -47,9 +37,7 @@ class ModifiedImage(models.Model):
 
 
 	def delete(self):
-		k = Key(bucket, self.hash)
-		k.delete()
-		k.close()
+		settings.IMAGE_STORAGE.delete_file(self.hash)
 
 		models.Model.delete(self)
 
@@ -83,32 +71,8 @@ def valid_image_path(url):
 	return re.match(r'^(http://?)?[\w\-\.]+\.\w+/.+$', url, re.I)
 
 
-def retry(times, ex):
-	""" A decorator which can be called as:
-
-		@retry(5, S3DataError)
-		def fn():
-			pass
-
-	    and will call fn and if it throws an exception, it will keep
-	    trying 5 times. """
-	def retry_wrap(fn):
-		def fn_wrap(*args, **kwargs):
-			for i in range(times-1):
-				try:
-					return fn(*args, **kwargs)
-				except ex:
-					pass
-			return fn(*args, **kwargs)
-		return fn_wrap
-	return retry_wrap
-
-
-class CommandRunnerException(Exception):
-	display_image = None
-
-class ImageNotFoundException(CommandRunnerException):
-	display_image = None
+class ImageNotFoundException(Exception):
+	pass
 
 
 class CommandRunner:
@@ -215,8 +179,6 @@ class CommandRunner:
 
 
 	def run_commands(self, user=None):
-		k = Key(bucket, self.hash)
-			
 		check_remote_image = False
 		try:
 			image = ModifiedImage.objects.get(hash=self.hash)	
@@ -249,22 +211,13 @@ class CommandRunner:
 				except ValueError as e:
 					break
 
-			self.set_s3_contents(k)
+			settings.IMAGE_STORAGE.save_image(self.hash, self.filename)
 			image.size = os.path.getsize(self.filename)
 
 			os.unlink(self.filename)
 
 		image.save()
 
-		ret = k.generate_url(settings.S3_EXPIRES, 'GET', 
-				{'Cache-Control': 'public, max-age=7200',
-				'Expires': time.asctime(time.gmtime(time.time() + 7200)) })
-		k.close()
+		return settings.IMAGE_STORAGE.get_image_url(self.hash)
 
-		return ret
 
-	@retry(3, S3DataError)
-	def set_s3_contents(self, key):
-		key.set_contents_from_filename(self.filename, 
-				{'Cache-Control': 'public, max-age=7200',
-				'Expires': time.asctime(time.gmtime(time.time() + 7200)) })

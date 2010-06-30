@@ -54,7 +54,5 @@ def modify(request, url):
 		return HttpResponseRedirect(img)
 	except ImageNotFoundException:
 		raise Http404
-	except CommandRunnerException as e:
-		return HttpResponseRedirect(e.display_image)
 	
 	raise Http404
