@@ -5,6 +5,7 @@ django-url-imaging provides URL-based image processing functionality for Django
 projects.  It features a plugabble storage system with implementations for
 storing images locally or on `Amazon S3`_.  
 
+
 Overview
 --------
 
@@ -25,13 +26,57 @@ For more information on django-url-imaging, please check out the Wiki_.
 Installation
 ------------
 
-#. Download_ and install django-url-imaging using Distutils_
+1. Download_ and install django-url-imaging using Distutils_:
 
-#. Add the ``urlimaging`` app to ``INSTALLED_APPS``
+  ``$ sudo python setup.py install``
 
-#. Include ``urlimaging.urls`` as a resource in your ``urls.py``
+2. Add the ``urlimaging`` app to ``INSTALLED_APPS``
 
-#. Finally, depending on if you want to use S3 or local file storage, configure_ the appropriate settings.
+3. Include ``urlimaging.urls`` as a resource in your ``urls.py``:
+
+  ``(r'imaging/', include('urlimaging.urls')),``
+
+4. Finally, depending on if you want to use S3 or local file storage, configure the appropriate settings:
+
+
+Configuration
+-------------
+
+Depending on how you plan to store your images, you will need to add one of the
+following sets of properties to your ``settings.py`` file:
+
+Amazon S3
+~~~~~~~~~
+
+* ``S3_BUCKET_NAME`` – The name of the bucket (which should already be created) on S3 where images will be stored.
+
+* ``S3_EXPIRES`` (optional) – The length of time which the S3-generated URL will be valid.
+
+* ``AWS_ACCESS_KEY_ID`` – The AWS access key provided by Amazon.
+
+* ``AWS_SECRET_ACCESS_KEY`` – The AWS secret access key provided by Amazon.
+
+
+
+Local Image Storage
+~~~~~~~~~~~~~~~~~~~
+
+* ``S3_BUCKET_NAME`` – The name of the bucket (which should already be created) on S3 where images will be stored.
+
+* ``S3_EXPIRES`` (optional) – The length of time which the S3-generated URL will be valid.
+
+* ``AWS_ACCESS_KEY_ID`` – The AWS access key provided by Amazon.
+
+* ``AWS_SECRET_ACCESS_KEY`` – The AWS secret access key provided by Amazon.
+
+
+Additional Configuration
+------------------------
+
+* ``WHITELIST_FN`` – Defines a function which takes one argument – the URL of the current image processing request. The method should return True or False to either allow the image to be processed or not. If not set it will only allow images to be processed from URLs containing settings.MEDIA_URL
+
+* ``IMAGE_STORAGE_DIRECTORY`` – The directory where temporary image files will be created. Defaults to /tmp
+
 
 .. _Amazon S3: http://google.com
 .. _Download: http://github.com/patrickomatic/django-url-imaging/downloads
