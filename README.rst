@@ -34,7 +34,7 @@ Installation
 
 3. Include ``urlimaging.urls`` as a resource in your ``urls.py``:
 
-  ``(r'imaging/', include('urlimaging.urls')),``
+  ``(r'thumbnails/', include('urlimaging.urls')),``
 
 4. Finally, depending on if you want to use S3 or local file storage, configure the appropriate settings:
 
@@ -47,6 +47,8 @@ following sets of properties to your ``settings.py`` file:
 
 Amazon S3
 ~~~~~~~~~
+
+* ``IMAGE_STORAGE_BACKEND`` – This should be set to 'S3ImageStorage' to specify the S3 storage backend.
 
 * ``S3_BUCKET_NAME`` – The name of the bucket (which should already be created) on S3 where images will be stored.
 
@@ -61,22 +63,19 @@ Amazon S3
 Local Image Storage
 ~~~~~~~~~~~~~~~~~~~
 
-* ``S3_BUCKET_NAME`` – The name of the bucket (which should already be created) on S3 where images will be stored.
+* ``IMAGE_STORAGE_BACKEND`` – This parameter should be set to 'LocalImageStorage' for the local image storage backend.
 
-* ``S3_EXPIRES`` (optional) – The length of time which the S3-generated URL will be valid.
+* ``IMAGE_STORAGE_DIR`` (optional) – The full path to the directory where images should be stored if this is not set, the value is inherited from MEDIA_ROOT. This directory should be publicly accessible since the application doesn't serve images directly from it.
 
-* ``AWS_ACCESS_KEY_ID`` – The AWS access key provided by Amazon.
+* ``IMAGE_WHITELIST_FN`` – Should be defined as a function that takes one parameter of the URL and returns a boolean. The function should return False for urls that shouldn't be processed. In most cases, you might want to use something similar to
 
-* ``AWS_SECRET_ACCESS_KEY`` – The AWS secret access key provided by Amazon.
+	IMAGE_WHITELIST_FN = lambda url: True
 
 
 Additional Configuration
 ------------------------
 
-* ``WHITELIST_FN`` – Defines a function which takes one argument – the URL of the current image processing request. The method should return True or False to either allow the image to be processed or not. If not set it will only allow images to be processed from URLs containing settings.MEDIA_URL
-
-* ``IMAGE_STORAGE_DIRECTORY`` – The directory where temporary image files will be created. Defaults to /tmp
-
+* ``MEDIA_URL`` – If you're using the LocalImageStorage backend, setting this parameter gives the root url that serves images stored in the ``IMAGE_STORAGE_DIR``
 
 .. _Amazon S3: http://google.com
 .. _Download: http://github.com/patrickomatic/django-url-imaging/downloads
