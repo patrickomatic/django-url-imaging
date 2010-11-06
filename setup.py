@@ -8,6 +8,7 @@ setup(
 		description="URL-based image processing for Django",
 		author="Patrick Carroll",
 		author_email="patrick@patrickomatic.com",
+		requires=['boto'],
 		url="http://urlimg.com/opensource",
 		packages=['urlimaging', 'urlimaging.backends'],
 )
