@@ -1,5 +1,6 @@
 import time, shutil, os
-from boto.s3.key import Key, S3DataError
+from boto.s3.key import Key
+from boto.exception import S3DataError
 from boto.s3.connection import S3Connection
 
 from django.conf import settings
