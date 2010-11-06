@@ -3,7 +3,8 @@ django-url-imaging
 
 django-url-imaging provides URL-based image processing functionality for Django
 projects.  It features a plugabble storage system with implementations for
-storing images locally or on `Amazon S3`_.  
+storing images locally,  on `Amazon S3`_ or using the SCP utiltiy to copy them
+to another server.  
 
 
 Overview
@@ -59,7 +60,6 @@ Amazon S3
 * ``AWS_SECRET_ACCESS_KEY`` – The AWS secret access key provided by Amazon.
 
 
-
 Local Image Storage
 ~~~~~~~~~~~~~~~~~~~
 
@@ -72,10 +72,26 @@ Local Image Storage
 	IMAGE_WHITELIST_FN = lambda url: True
 
 
+SCP
+~~~
+
+If you'd like to use the ``scp`` command to copy the generated files to another UNIX-like server, configure the following options:
+
+* ``PROCESSED_MEDIA_URL`` - A URL where the images can be accessed once they are stored
+
+* ``SSH_MEDIA_USER`` - The username which has ssh access on the remote host
+
+* ``SSH_MEDIA_PATH`` - The path to where the images will be stored on the remote host
+
+* ``SSH_IDENTITY_FILE`` - If an identity file is required for access to the remote host, this is the path to that file.
+
+
+
 Additional Configuration
 ------------------------
 
 * ``MEDIA_URL`` – If you're using the LocalImageStorage backend, setting this parameter gives the root url that serves images stored in the ``IMAGE_STORAGE_DIR``
+
 
 .. _Amazon S3: http://google.com
 .. _Download: http://github.com/patrickomatic/django-url-imaging/downloads
