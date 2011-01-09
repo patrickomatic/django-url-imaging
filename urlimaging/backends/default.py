@@ -1,5 +1,6 @@
 import time, shutil, os
-from boto.s3.key import Key, S3DataError
+from boto.s3.key import Key
+from boto.exception import S3DataError
 from boto.s3.connection import S3Connection
 
 from django.conf import settings
@@ -91,3 +92,34 @@ class LocalImageStorage(ImageStorage):
 
 	def get_required_settings(self):
 		return []
+
+
+class SCPImageStorage(ImageStorage):
+	def identity_file_str(self):
+		try:
+			return "-i " + settings.SSH_IDENTITY_FILE
+		except AttributeError:
+			return ""
+
+	def delete_image(self, hash):
+		os.system("ssh %(identify_file)s %(ssh_user)s \"rm %(file_path)s\"" \ 
+				% {'identity_file': self.identity_file_str(),
+					'ssh_user': settings.SSH_MEDIA_USER,
+					'file_path': os.path.join(settings.SSH_MEDIA_PATH, hash)})
+
+	def save_image(self, filename):
+		os.system("scp %(identity_file)s %(filename)s %(ssh_user)s:%(file_path)" \ 
+				% {'identity_file': self.identity_file_str(),
+					'ssh_user': settings.SSH_MEDIA_USER, 'filename': filename,
+					'file_path': os.path.join(settings.SSH_MEDIA_PATH, hash)})
+
+	def get_image_url(self, hash):
+		url = settings.PROCESSED_MEDIA_URL
+		if url.endswith("/"):
+			return url + hash
+		else:
+			return url + '/' + hash
+
+	def get_required_settings(self):
+		return ['PROCESSED_MEDIA_URL', 'SSH_MEDIA_USER', 'SSH_MEDIA_PATH',]
+

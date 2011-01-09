@@ -27,6 +27,7 @@ class Site(models.Model):
 
 class ModifiedImage(models.Model):
 	hash = models.CharField(max_length=56, unique=True, db_index=True) 
+	ext = models.CharField(max_length=10, db_index=True)
 	operations = models.CharField(max_length=4096) 
 	last_modified = models.CharField(max_length=255, null=True)
 	last_checked = models.DateTimeField(db_index=True, default=datetime.datetime.now())
@@ -80,6 +81,7 @@ class CommandRunner:
 		self.todo = []
 		self.url = ""
 		self.filename = ""
+		self.hashed_filename = ""
 		self.ext = ""
 		self.hash = ""
 		self.operations = ""
@@ -111,6 +113,7 @@ class CommandRunner:
 
 			self.hash = hashlib.sha224(self.operations + url).hexdigest()
 			self.filename = file_location(self.hash, self.ext)
+			self.hashed_filename = "%s%s" % (self.hash, self.ext)
 		else:
 			self.todo = []
 
@@ -186,7 +189,7 @@ class CommandRunner:
 			# need to create the image
 			image = ModifiedImage(hash=self.hash, \
 					original_location=url_path(self.url), \
-					operations=self.operations)
+					operations=self.operations, ext=self.ext)
 
 			# do we need to create the domain too?
 			try:
@@ -211,11 +214,11 @@ class CommandRunner:
 				except ValueError as e:
 					break
 
-			settings.IMAGE_STORAGE.save_image(self.hash, self.filename)
+			settings.IMAGE_STORAGE.save_image(self.hashed_filename, self.filename)
 			image.size = os.path.getsize(self.filename)
 
 			os.unlink(self.filename)
 
 		image.save()
 
-		return settings.IMAGE_STORAGE.get_image_url(self.hash)
+		return settings.IMAGE_STORAGE.get_image_url(self.hashed_filename)

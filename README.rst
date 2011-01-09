@@ -3,7 +3,8 @@ django-url-imaging
 
 django-url-imaging provides URL-based image processing functionality for Django
 projects.  It features a plugabble storage system with implementations for
-storing images locally or on `Amazon S3`_.  
+storing images locally,  on `Amazon S3`_ or using the SCP utiltiy to copy them
+to another server.  
 
 .. raw:: html
   <a href='http://www.pledgie.com/campaigns/14384'><img alt='Click here to lend your support to: django-url-imaging and make a donation at www.pledgie.com !' src='http://www.pledgie.com/campaigns/14384.png?skin_name=chrome' border='0' /></a>
@@ -37,7 +38,7 @@ Installation
 
 3. Include ``urlimaging.urls`` as a resource in your ``urls.py``:
 
-  ``(r'imaging/', include('urlimaging.urls')),``
+  ``(r'thumbnails/', include('urlimaging.urls')),``
 
 4. Finally, depending on if you want to use S3 or local file storage, configure the appropriate settings:
 
@@ -51,6 +52,8 @@ following sets of properties to your ``settings.py`` file:
 Amazon S3
 ~~~~~~~~~
 
+* ``IMAGE_STORAGE_BACKEND`` – This should be set to 'S3ImageStorage' to specify the S3 storage backend.
+
 * ``S3_BUCKET_NAME`` – The name of the bucket (which should already be created) on S3 where images will be stored.
 
 * ``S3_EXPIRES`` (optional) – The length of time which the S3-generated URL will be valid.
@@ -58,27 +61,39 @@ Amazon S3
 * ``AWS_ACCESS_KEY_ID`` – The AWS access key provided by Amazon.
 
 * ``AWS_SECRET_ACCESS_KEY`` – The AWS secret access key provided by Amazon.
-
 
 
 Local Image Storage
 ~~~~~~~~~~~~~~~~~~~
 
-* ``S3_BUCKET_NAME`` – The name of the bucket (which should already be created) on S3 where images will be stored.
+* ``IMAGE_STORAGE_BACKEND`` – This parameter should be set to 'LocalImageStorage' for the local image storage backend.
 
-* ``S3_EXPIRES`` (optional) – The length of time which the S3-generated URL will be valid.
+* ``IMAGE_STORAGE_DIR`` (optional) – The full path to the directory where images should be stored if this is not set, the value is inherited from MEDIA_ROOT. This directory should be publicly accessible since the application doesn't serve images directly from it.
 
-* ``AWS_ACCESS_KEY_ID`` – The AWS access key provided by Amazon.
+* ``IMAGE_WHITELIST_FN`` – Should be defined as a function that takes one parameter of the URL and returns a boolean. The function should return False for urls that shouldn't be processed. In most cases, you might want to use something similar to
 
-* ``AWS_SECRET_ACCESS_KEY`` – The AWS secret access key provided by Amazon.
+	IMAGE_WHITELIST_FN = lambda url: True
+
+
+SCP
+~~~
+
+If you'd like to use the ``scp`` command to copy the generated files to another UNIX-like server, configure the following options:
+
+* ``PROCESSED_MEDIA_URL`` - A URL where the images can be accessed once they are stored
+
+* ``SSH_MEDIA_USER`` - The username which has ssh access on the remote host
+
+* ``SSH_MEDIA_PATH`` - The path to where the images will be stored on the remote host
+
+* ``SSH_IDENTITY_FILE`` - If an identity file is required for access to the remote host, this is the path to that file.
+
 
 
 Additional Configuration
 ------------------------
 
-* ``WHITELIST_FN`` – Defines a function which takes one argument – the URL of the current image processing request. The method should return True or False to either allow the image to be processed or not. If not set it will only allow images to be processed from URLs containing settings.MEDIA_URL
-
-* ``IMAGE_STORAGE_DIRECTORY`` – The directory where temporary image files will be created. Defaults to /tmp
+* ``MEDIA_URL`` – If you're using the LocalImageStorage backend, setting this parameter gives the root url that serves images stored in the ``IMAGE_STORAGE_DIR``
 
 
 .. _Amazon S3: http://google.com
