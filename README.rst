@@ -1,7 +1,7 @@
 django-url-imaging
 ==================
 
-.. image:: http://www.pledgie.com/campaigns/14384.png?skin_name=chrome
+.. image:: http://pledgie.com/campaigns/14384.png?skin_name=chrome
     :align: right
     :alt: Click here to lend your support to: django-url-imaging and make a donation at www.pledgie.com!
     :target: http://www.pledgie.com/campaigns/14384
