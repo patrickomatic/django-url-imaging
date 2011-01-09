@@ -5,6 +5,9 @@ django-url-imaging provides URL-based image processing functionality for Django
 projects.  It features a plugabble storage system with implementations for
 storing images locally or on `Amazon S3`_.  
 
+.. raw:: html
+  <a href='http://www.pledgie.com/campaigns/14384'><img alt='Click here to lend your support to: django-url-imaging and make a donation at www.pledgie.com !' src='http://www.pledgie.com/campaigns/14384.png?skin_name=chrome' border='0' /></a>
+
 
 Overview
 --------
