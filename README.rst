@@ -7,6 +7,7 @@ storing images locally,  on `Amazon S3`_ or using the SCP utiltiy to copy them
 to another server.  
 
 .. raw:: html
+
   <a href='http://www.pledgie.com/campaigns/14384'><img alt='Click here to lend your support to: django-url-imaging and make a donation at www.pledgie.com !' src='http://www.pledgie.com/campaigns/14384.png?skin_name=chrome' border='0' /></a>
 
 
