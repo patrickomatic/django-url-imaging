@@ -97,6 +97,8 @@ Additional Configuration
 
 * ``MEDIA_URL`` – If you're using the LocalImageStorage backend, setting this parameter gives the root url that serves images stored in the ``IMAGE_STORAGE_DIR``
 
+* ``FONT_PATH`` - The path to the font file to be used when using the watermark operation.  Defaults to 
+
 
 .. _Amazon S3: http://google.com
 .. _Download: http://github.com/patrickomatic/django-url-imaging/downloads

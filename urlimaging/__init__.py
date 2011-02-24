@@ -29,3 +29,9 @@ try:
 	getattr(settings, 'IMAGE_WHITELIST_FN')
 except AttributeError:
 	settings.IMAGE_WHITELIST_FN = lambda url: settings.MEDIA_URL in url
+
+try:
+	getattr(settings, 'FONT_PATH')
+except AttributeError:
+	settings.FONT_PATH = '/usr/share/fonts/truetype/freefont/FreeSansBold.ttf'
+

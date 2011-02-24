@@ -1,7 +1,11 @@
 import re, os
 from math import atan, degrees
 from PIL import Image, ImageChops, ImageFilter, ImageDraw, ImageFont
+
+from django.conf import settings
+
 from urlimaging.validator import *
+
 
 TEN_MBS = 10 * 1024 * 1024 * 1024
 RGB_ONLY_FORMATS = set(['.jpg', '.jpeg'])
@@ -149,8 +153,6 @@ def convert(filename, format):
 	img.save(filename, format, quality=95)
 
 
-FONT = '/usr/share/fonts/truetype/freefont/FreeSansBold.ttf'
-
 @with_image
 def watermark(img, text):
 	if img.mode != 'RGB':
@@ -162,7 +164,7 @@ def watermark(img, text):
 	size = 0
 	while True:
 		size += 1
-		nextFont = ImageFont.truetype(FONT, size)
+		nextFont = ImageFont.truetype(settings.FONT_PATH, size)
 		nextTextWidth, nextTextHeight = nextFont.getsize(text)
 		if nextTextWidth + nextTextHeight / 3 > watermark.size[0]:
 			break
@@ -244,7 +246,7 @@ def background(img, color):
 	return overlayed
 
 
-COMMANDS = [ { 
+COMMANDS = [{ 
 		'regex': re.compile(r'^resize/(\d+)x(\d+)/', re.I),
 		'fn': resize, 
 		'title': 'Resize',
