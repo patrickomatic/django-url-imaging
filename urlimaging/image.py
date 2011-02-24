@@ -140,7 +140,13 @@ def convert(filename, format):
 	img = Image.open(filename)
 	if img.mode != 'RGB':
 		img = img.convert('RGB')
-	img.save(filename, format.upper(), quality=95)
+
+	# for some reason this chokes on 'JPG'
+	format = format.upper()
+	if format == 'JPG':
+		format = 'JPEG'
+
+	img.save(filename, format, quality=95)
 
 
 FONT = '/usr/share/fonts/truetype/freefont/FreeSansBold.ttf'
