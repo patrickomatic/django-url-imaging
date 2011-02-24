@@ -219,6 +219,7 @@ class CommandRunner:
 
 			os.unlink(self.filename)
 
-		image.save()
+		if check_remote_image:
+			image.save()
 
 		return settings.IMAGE_STORAGE.get_image_url(self.hashed_filename)
