@@ -150,7 +150,7 @@ def convert(filename, format):
 	if format == 'JPG':
 		format = 'JPEG'
 
-	img.save(filename, format, quality=95)
+	img.save(filename + '.' + format, format, quality=95)
 
 
 @with_image
