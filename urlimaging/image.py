@@ -332,8 +332,8 @@ COMMANDS = [{
 		'description': 'Select a rectangular region of an image and remove everything outside of that region.',
 		'format': '<tt>/crop/CORNER-X,CORNER-Y,WIDTHxHEIGHT/IMAGEURL</tt>',
 		'arguments': [ 
-			('CORNER-X', 'The x coordinate of the bottom left corner of the rectangle to be cropped.'),
-			('CORNER-Y', 'The y coordinate of the bottom left corner of the rectangle to be cropped.'),
+			('CORNER-X', 'The x coordinate of the top left corner of the rectangle to be cropped.'),
+			('CORNER-Y', 'The y coordinate of the top left corner of the rectangle to be cropped.'),
 			('WIDTH', 'The width of the rectangle to be cropped.'),
 			('HEIGHT', 'The height of the rectangle to be cropped.'),
 		],
