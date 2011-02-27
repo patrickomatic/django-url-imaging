@@ -123,6 +123,8 @@ class CommandRunner:
 		    if it's been used by either using the last-modified header saved from a previous
 		    request, or if that doesn't exist, it compares a hash of the file's contents """
 		image.last_checked = datetime.datetime.now()
+		# if it exists, always save here that it's been checked
+		if image.id: image.save()
 
 		request = urllib2.Request(self.url)
 
