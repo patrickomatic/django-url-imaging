@@ -40,3 +40,10 @@ try:
 except AttributeError:
 	settings.FONT_PATH = '/usr/share/fonts/truetype/freefont/FreeSansBold.ttf'
 
+
+# days before images that haven't been visited are considered for deletion
+try:
+	getattr(settings, 'IMAGE_EXPIRATION_DAYS')
+	# XXX verify that it's an int
+except AttributeError:
+	settings.IMAGE_EXPIRATION_DAYS = 7

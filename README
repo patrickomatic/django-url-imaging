@@ -92,6 +92,13 @@ If you'd like to use the ``scp`` command to copy the generated files to another 
 * ``SSH_IDENTITY_FILE`` - If an identity file is required for access to the remote host, this is the path to that file.
 
 
+Custom django-admin commands
+----------------------------
+
+django-url-imaging adds the following custom command to the project's django-admin:
+
+* ``removeoldimages`` - Will remove any processed images which haven't been visited for a a predetermined time (defaults to a week).  It is recommended that this is added to a scheduling system such as ``cron`` to be run every couple of days.  
+
 
 Additional Configuration
 ------------------------
@@ -100,6 +107,8 @@ Additional Configuration
 
 * ``FONT_PATH`` - The path to the font file to be used when using the watermark operation.  Defaults to ``/usr/share/fonts/truetype/freefont/FreeSansBold.ttf``
 
+* ``IMAGE_EXPIRATION_DAYS`` - The number of days before images which haven't
+been visited are deleted.  Defaults to ``7``.
 
 
 .. _Amazon S3: http://google.com
