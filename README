@@ -58,11 +58,12 @@ Amazon S3
 
 * ``S3_BUCKET_NAME`` – The name of the bucket (which should already be created) on S3 where images will be stored.
 
-* ``S3_EXPIRES`` (optional) – The length of time which the S3-generated URL will be valid.
-
 * ``AWS_ACCESS_KEY_ID`` – The AWS access key provided by Amazon.
 
 * ``AWS_SECRET_ACCESS_KEY`` – The AWS secret access key provided by Amazon.
+
+* ``S3_EXPIRES`` (optional) – The length of time which the S3-generated URL will be valid.
+
 
 
 Local Image Storage
@@ -70,11 +71,11 @@ Local Image Storage
 
 * ``IMAGE_STORAGE_BACKEND`` – This parameter should be set to 'LocalImageStorage' for the local image storage backend.
 
+* ``IMAGE_WHITELIST_FN`` – A function which takes a url as an argument and uses that to decide whether or not to allow it to be processed.  By default it is defined as ``lambda url: True`` which will allow for processing all images.  To restrict it to only process images in your ``MEDIA_URL``, set it to:
+
+  IMAGE_WHITELIST_FN = lambda url: settings.MEDIA_URL in url
+
 * ``IMAGE_STORAGE_DIR`` (optional) – The full path to the directory where images should be stored if this is not set, the value is inherited from MEDIA_ROOT. This directory should be publicly accessible since the application doesn't serve images directly from it.
-
-* ``IMAGE_WHITELIST_FN`` – Should be defined as a function that takes one parameter of the URL and returns a boolean. The function should return False for urls that shouldn't be processed. In most cases, you might want to use something similar to
-
-	IMAGE_WHITELIST_FN = lambda url: True
 
 
 SCP

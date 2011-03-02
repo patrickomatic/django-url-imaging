@@ -19,17 +19,22 @@ try:
 except AttributeError:
 	settings.IMAGE_STORAGE = S3ImageStorage()
 
+# depending on the backend used, make sure that all required settings are supplied
 for setting in settings.IMAGE_STORAGE.get_required_settings():
 	try:
 		getattr(settings, setting)
 	except AttributeError:
 		raise ImproperlyConfigured("You must set %s in your settings.py" % setting)
 	
+
+# the function which decides whether or not to process the image
 try:
 	getattr(settings, 'IMAGE_WHITELIST_FN')
 except AttributeError:
 	settings.IMAGE_WHITELIST_FN = lambda url: settings.MEDIA_URL in url
 
+
+# the font settings for watermarking
 try:
 	getattr(settings, 'FONT_PATH')
 except AttributeError:
