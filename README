@@ -73,7 +73,7 @@ Local Image Storage
 
 * ``IMAGE_WHITELIST_FN`` – A function which takes a url as an argument and uses that to decide whether or not to allow it to be processed.  By default it is defined as ``lambda url: True`` which will allow for processing all images.  To restrict it to only process images in your ``MEDIA_URL``, set it to:
 
-  IMAGE_WHITELIST_FN = lambda url: settings.MEDIA_URL in url
+  ``IMAGE_WHITELIST_FN = lambda url: settings.MEDIA_URL in url``
 
 * ``IMAGE_STORAGE_DIR`` (optional) – The full path to the directory where images should be stored if this is not set, the value is inherited from MEDIA_ROOT. This directory should be publicly accessible since the application doesn't serve images directly from it.
 
