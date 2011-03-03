@@ -107,8 +107,7 @@ Additional Configuration
 
 * ``FONT_PATH`` - The path to the font file to be used when using the watermark operation.  Defaults to ``/usr/share/fonts/truetype/freefont/FreeSansBold.ttf``
 
-* ``IMAGE_EXPIRATION_DAYS`` - The number of days before images which haven't
-been visited are deleted.  Defaults to ``7``.
+* ``IMAGE_EXPIRATION_DAYS`` - The number of days before images which haven't been visited are deleted.  Defaults to ``7``.
 
 
 .. _Amazon S3: http://google.com
