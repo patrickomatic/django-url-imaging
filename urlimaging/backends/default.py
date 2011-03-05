@@ -1,7 +1,4 @@
 import time, shutil, os
-from boto.s3.key import Key
-from boto.exception import S3DataError
-from boto.s3.connection import S3Connection
 
 from django.conf import settings
 
@@ -43,14 +40,19 @@ def retry(times, ex):
 
 class S3ImageStorage(ImageStorage):
 	def __init__(self):
+		from boto.s3.key import Key
+		from boto.exception import S3DataError
+		from boto.s3.connection import S3Connection
 
 		self.connection = S3Connection(settings.AWS_ACCESS_KEY_ID, settings.AWS_SECRET_ACCESS_KEY)
 		self.bucket = self.connection.get_bucket(settings.S3_BUCKET_NAME)
+
 
 	def delete_image(self, hash):
 		k = Key(self.bucket, hash)
 		k.delete()
 		k.close()
+
 
 	@retry(3, S3DataError)
 	def save_image(self, hash, filename):
@@ -59,6 +61,7 @@ class S3ImageStorage(ImageStorage):
 				{'Cache-Control': 'public, max-age=7200',
 				'Expires': time.asctime(time.gmtime(time.time() + 7200)) })
 		key.close()
+
 
 	def get_image_url(self, hash):
 		key = Key(self.bucket, hash)
@@ -70,8 +73,10 @@ class S3ImageStorage(ImageStorage):
 
 		return ret
 
+
 	def get_required_settings(self):
 		return ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'S3_BUCKET_NAME']
+
 
 class LocalImageStorage(ImageStorage):
 	def get_storage_dir(self):
@@ -80,15 +85,19 @@ class LocalImageStorage(ImageStorage):
 		except AttributeError:
 			return settings.MEDIA_ROOT
 
+
 	def delete_image(self, hash):
 		os.unlink(os.path.join(self.get_storage_dir(), hash))
+
 
 	def save_image(self, hash, filename):
 		shutil.copyfile(filename, os.path.join(self.get_storage_dir(), hash))
 
+
 	def get_image_url(self, hash):
 		# XXX check for a setting
 		return settings.MEDIA_URL + "/" + hash
+
 
 	def get_required_settings(self):
 		return []
