@@ -54,7 +54,7 @@ class S3ImageStorage(ImageStorage):
 		k.close()
 
 
-	@retry(3, S3DataError)
+	@retry(3, Exception)
 	def save_image(self, hash, filename):
 		key = Key(self.bucket, hash)
 		key.set_contents_from_filename(filename, 
