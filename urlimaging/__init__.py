@@ -19,6 +19,12 @@ try:
 except AttributeError:
 	settings.IMAGE_STORAGE = S3ImageStorage()
 
+# default S3_EXPIRES
+try:
+	getattr(settings, 'S3_EXPIRES')
+except AttributeError:
+	settings.S3_EXPIRES = 2 * 24 * 60 * 60
+
 # depending on the backend used, make sure that all required settings are supplied
 for setting in settings.IMAGE_STORAGE.get_required_settings():
 	try:
