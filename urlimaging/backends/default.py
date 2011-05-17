@@ -40,8 +40,6 @@ def retry(times, ex):
 
 class S3ImageStorage(ImageStorage):
 	def __init__(self):
-		from boto.s3.key import Key
-		from boto.exception import S3DataError
 		from boto.s3.connection import S3Connection
 
 		self.connection = S3Connection(settings.AWS_ACCESS_KEY_ID, settings.AWS_SECRET_ACCESS_KEY)
@@ -49,6 +47,8 @@ class S3ImageStorage(ImageStorage):
 
 
 	def delete_image(self, hash):
+		from boto.s3.key import Key
+
 		k = Key(self.bucket, hash)
 		k.delete()
 		k.close()
@@ -56,6 +56,8 @@ class S3ImageStorage(ImageStorage):
 
 	@retry(3, Exception)
 	def save_image(self, hash, filename):
+		from boto.s3.key import Key
+
 		key = Key(self.bucket, hash)
 		key.set_contents_from_filename(filename, 
 				{'Cache-Control': 'public, max-age=7200',
@@ -64,6 +66,8 @@ class S3ImageStorage(ImageStorage):
 
 
 	def get_image_url(self, hash):
+		from boto.s3.key import Key
+
 		key = Key(self.bucket, hash)
 
 		ret = key.generate_url(settings.S3_EXPIRES, 'GET', 
