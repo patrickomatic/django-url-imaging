@@ -9,7 +9,7 @@ setup(
 		author="Patrick Carroll",
 		author_email="patrick@patrickomatic.com",
 		requires=['boto', 'PIL', 'django'],
-		url="http://urlimg.com/opensource",
+		url="https://github.com/patrickomatic/django-url-imaging",
 		packages=['urlimaging', 'urlimaging.backends'],
 )
 
