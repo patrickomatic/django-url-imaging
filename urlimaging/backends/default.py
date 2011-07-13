@@ -115,15 +115,16 @@ class SCPImageStorage(ImageStorage):
 			return ""
 
 	def delete_image(self, hash):
-		os.system("ssh %(identify_file)s %(ssh_user)s \"rm %(file_path)s\"" 
-				% {'identity_file': self.identity_file_str(),
+		os.system("ssh %(identify_file)s %(ssh_user)s \"rm %(file_path)s\"" % {
+					'identity_file': self.identity_file_str(),
 					'ssh_user': settings.SSH_MEDIA_USER,
 					'file_path': os.path.join(settings.SSH_MEDIA_PATH, hash)})
 
 	def save_image(self, filename):
-		os.system("scp %(identity_file)s %(filename)s %(ssh_user)s:%(file_path)" 
-				% {'identity_file': self.identity_file_str(),
-					'ssh_user': settings.SSH_MEDIA_USER, 'filename': filename,
+		os.system("scp %(identity_file)s %(filename)s %(ssh_user)s:%(file_path)s" % {
+					'identity_file': self.identity_file_str(),
+					'ssh_user': settings.SSH_MEDIA_USER, 
+					'filename': filename,
 					'file_path': os.path.join(settings.SSH_MEDIA_PATH, hash)})
 
 	def get_image_url(self, hash):
