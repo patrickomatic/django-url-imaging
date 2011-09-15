@@ -38,7 +38,7 @@ class ModifiedImage(models.Model):
 
 
 	def delete(self):
-		settings.IMAGE_STORAGE.delete_file(self.hash)
+		settings.IMAGE_STORAGE.delete_image(self.hash)
 
 		models.Model.delete(self)
 

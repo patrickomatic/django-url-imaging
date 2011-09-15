@@ -5,7 +5,7 @@ from django.conf import settings
 
 class ImageStorage:
 	def delete_image(self, hash):
-		raise Exception('delete_file not implemented')
+		raise Exception('delete_image not implemented')
 
 	def save_image(self, filename):
 		raise Exception('save_image not implemented')
