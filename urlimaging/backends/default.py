@@ -60,8 +60,8 @@ class S3ImageStorage(ImageStorage):
 
 		key = Key(self.bucket, hash)
 		key.set_contents_from_filename(filename, 
-				{'Cache-Control': 'public, max-age=7200',
-				'Expires': time.asctime(time.gmtime(time.time() + 7200)) })
+				{'Cache-Control': 'public, max-age=%d' % settings.S3_EXPIRES,
+				'Expires': time.asctime(time.gmtime(time.time() + settings.S3_EXPIRES)) })
 		key.close()
 
 
@@ -71,8 +71,8 @@ class S3ImageStorage(ImageStorage):
 		key = Key(self.bucket, hash)
 
 		ret = key.generate_url(settings.S3_EXPIRES, 'GET', 
-				{'Cache-Control': 'public, max-age=7200',
-				'Expires': time.asctime(time.gmtime(time.time() + 7200)) })
+				{'Cache-Control': 'public, max-age=%d' % settings.S3_EXPIRES,
+				'Expires': time.asctime(time.gmtime(time.time() + settings.S3_EXPIRES)) })
 		key.close()
 
 		return ret
