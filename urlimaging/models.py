@@ -65,7 +65,7 @@ def file_location(hash, ext):
 
 def sanitize_url(url):
 	domain, url = domain_name(url), url_path(url)
-	return 'http://' + domain + urllib.quote(url)
+	return 'http://' + domain + urllib.quote(url, safe="%/:=&?~#+!$,;'@()*[]")
 
 
 def valid_image_path(url):
