@@ -36,6 +36,9 @@ def latin1_to_ascii(uni):
 
 
 def modify(request, url):
+	if request.META['QUERY_STRING']:
+		url = url + "?" + request.META['QUERY_STRING']
+
 	cr = CommandRunner(latin1_to_ascii(url))
 
 	if not settings.IMAGE_WHITELIST_FN(cr.url):
