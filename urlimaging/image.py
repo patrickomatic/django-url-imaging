@@ -19,8 +19,11 @@ def with_image(fn):
 		ext = os.path.splitext(args[0])[1].lower()
 		if ext in RGB_ONLY_FORMATS and img.mode != 'RGB':
 			img = img.convert('RGB')
+		elif ext == '.png' and img.mode in ('P', 'I', 'RGB'):
+			img = img.convert('RGBA').convert('P', palette=Image.ADAPTIVE)
 
-		img.save(args[0], quality=95)
+		img.save(args[0], quality=95, **img.info)
+
 	return process
 
 
