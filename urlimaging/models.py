@@ -107,7 +107,7 @@ class CommandRunner:
 
 		if self.todo and valid_image_path(url):
 			self.url = sanitize_url(url)
-			self.ext = os.path.splitext(url)[-1]
+			self.ext = os.path.splitext(re.sub(r'\?((.+)\=(.+))+$', '', url))[-1]
 			if not self.ext:
 				self.ext = '.jpg'
 
