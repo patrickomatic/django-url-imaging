@@ -52,6 +52,16 @@ def fit(img, width, height):
 
 
 @with_image
+def zoom(img, width, height):
+	w, h = img.size
+
+	if w < h:
+		return img.resize((int(width), int(float(h) * (float(width) / float(w)))), Image.ANTIALIAS)
+	else:
+		return img.resize((int(float(w) * (float(height) / float(h))), int(height)), Image.ANTIALIAS)
+
+
+@with_image
 def width(img, width):
 	w, h = img.size
 	return img.resize((int(width), int(float(h) * (float(width) / float(w)))), Image.ANTIALIAS)
@@ -296,6 +306,16 @@ COMMANDS = [{
 		'format': '<tt>/fit/WIDTHxHEIGHT/IMAGEURL</tt>',
 		'arguments': [ 
 			('WIDTHxHEIGHT', 'The box that the image must be resized to fit into. Expressed as a width and height specification of the form WIDTHxHEIGHT where WIDTH and HEIGHT are both positive numbers.') 
+		],
+	}, {
+		'regex': re.compile(r'^zoom/(\d+)x(\d+)/', re.I),
+		'fn': zoom, 
+		'title': 'Zoom',
+		'anchor_name': 'zoom',
+		'description': 'Similar to fit, but will zoom in on the image to get one side matching as best as possible.  If the image is wider than tall, it will do the equivalent of /height/HEIGHT/ otherwise it will do the equivalent of /width/WIDTH/',
+		'format': '<tt>/zoom/WIDTHxHEIGHT/IMAGEURL</tt>',
+		'arguments': [ 
+			('WIDTHxHEIGHT', 'The box that the image must be zoomed to fit into. Expressed as a width and height specification of the form WIDTHxHEIGHT where WIDTH and HEIGHT are both positive numbers.') 
 		],
 	}, {
 		'regex': re.compile(r'^thumb(?:nail)?/(small|medium|large|\d+)/', re.I),
