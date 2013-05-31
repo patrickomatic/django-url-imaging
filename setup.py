@@ -4,7 +4,7 @@ from distutils.core import setup
 
 setup(
 		name="django-url-imaging",
-		version="0.3.1",
+		version="0.3.2",
 		description="URL-based image processing for Django",
 		author="Patrick Carroll",
 		author_email="patrick@patrickomatic.com",
