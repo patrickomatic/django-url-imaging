@@ -55,10 +55,20 @@ def fit(img, width, height):
 def zoom(img, width, height):
 	w, h = img.size
 
-	if w < h:
-		return img.resize((int(width), int(float(h) * (float(width) / float(w)))), Image.ANTIALIAS)
+	if w > h:
+		w = int(width)
+		h = int(float(h) * (float(width) / float(w)))
+		img = img.resize((w, h), Image.ANTIALIAS)
+		to_crop = int((h - height) / 2.0)
+
+		return img.crop((0, to_crop, width, height + to_crop))
 	else:
-		return img.resize((int(float(w) * (float(height) / float(h))), int(height)), Image.ANTIALIAS)
+		w = int(float(w) * (float(height) / float(h)))
+		h = int(height)
+		img = img.resize((w, h), Image.ANTIALIAS) 
+		to_crop = int((w - width) / 2.0)
+
+		return img.crop((to_crop, 0, width + to_crop, height))
 
 
 @with_image
