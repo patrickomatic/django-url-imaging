@@ -37,6 +37,7 @@ for setting in settings.IMAGE_STORAGE.get_required_settings():
 try:
 	getattr(settings, 'IMAGE_WHITELIST_FN')
 except AttributeError:
+	# XXX should this default to True?
 	settings.IMAGE_WHITELIST_FN = lambda url: settings.MEDIA_URL in url
 
 
