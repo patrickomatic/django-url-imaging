@@ -53,23 +53,25 @@ def fit(img, width, height):
 
 @with_image
 def zoom(img, width, height):
-	w, h = img.size
 	width, height = int(width), int(height)
 
-	if w > h:
-		w = width
-		h = int(float(h) * (width / float(w)))
-		img = img.resize((w, h), Image.ANTIALIAS)
-		to_crop = int((h - height) / 2.0)
+	w, h = img.size
+	source_aspect_ratio = float(w) / float(h)
+	desired_aspect_ratio = float(width) / float(height)
 
-		return img.crop((0, to_crop, width, height + to_crop))
+	if source_aspect_ratio > desired_aspect_ratio:
+		temp_width, temp_height = int(height * source_aspect_ratio), height
 	else:
-		w = int(float(w) * (height / float(h)))
-		h = height
-		img = img.resize((w, h), Image.ANTIALIAS) 
-		to_crop = int((w - width) / 2.0)
+		temp_width, temp_height = width, int(width / source_aspect_ratio)
 
-		return img.crop((to_crop, 0, width + to_crop, height))
+	if w < h:
+		to_crop = int((temp_height - height) / 2.0)
+		crop_points = (0, to_crop, width, height + to_crop)
+	else:
+		to_crop = int((temp_width - width) / 2.0)
+		crop_points = (to_crop, 0, width + to_crop, height)
+
+	return img.resize((temp_width, temp_height), Image.ANTIALIAS).crop(crop_points)
 
 
 @with_image
