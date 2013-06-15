@@ -1,6 +1,6 @@
 import re, os
 from math import atan, degrees
-from PIL import Image, ImageChops, ImageFilter, ImageDraw, ImageFont
+from PIL import Image, ImageChops, ImageFilter, ImageDraw, ImageFont, ImageFile
 
 from django.conf import settings
 
@@ -22,7 +22,11 @@ def with_image(fn):
 		elif ext == '.png' and img.mode in ('P', 'I', 'RGB'):
 			img = img.convert('RGBA').convert('P', palette=Image.ADAPTIVE)
 
-		img.save(args[0], quality=95, **img.info)
+		try:
+		    img.save(args[0], quality=95, **img.info)
+		except IOError:
+		    ImageFile.MAXBLOCK = img.size[0] * img.size[1]
+		    img.save(args[0], quality=95, **img.info)
 
 	return process
 
