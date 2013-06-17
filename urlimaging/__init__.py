@@ -54,3 +54,9 @@ try:
 	# XXX verify that it's an int
 except AttributeError:
 	settings.IMAGE_EXPIRATION_DAYS = 7
+
+# whether or not to use local timezone support
+try:
+	getattr(settings, 'USE_TZ')
+except AttributeError:
+	settings.USE_TZ = False

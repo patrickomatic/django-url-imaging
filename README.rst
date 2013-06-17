@@ -96,6 +96,8 @@ Additional Configuration
 
 * ``IMAGE_EXPIRATION_DAYS`` - The number of days before images which haven't been visited are deleted.  Defaults to ``7``.
 
+* ``USE_TZ`` - Whether or not to enable local timezone support.  Defaults to False
+
 
 .. _Amazon S3: http://google.com
 .. _Download: http://github.com/patrickomatic/django-url-imaging/downloads
