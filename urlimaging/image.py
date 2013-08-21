@@ -20,7 +20,11 @@ def with_image(fn):
 		if ext in RGB_ONLY_FORMATS and img.mode != 'RGB':
 			img = img.convert('RGB')
 		elif ext == '.png' and img.mode in ('P', 'I', 'RGB'):
-			img = img.convert('RGBA').convert('P', palette=Image.ADAPTIVE)
+			try:
+				img = img.convert('RGBA').convert('P', palette=Image.ADAPTIVE)
+			except ValueError:
+				# the above conversion can fail for some image modes, so just let it go
+				pass
 
 		try:
 			img.save(args[0], quality=95, **img.info)
