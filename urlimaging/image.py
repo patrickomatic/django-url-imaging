@@ -23,10 +23,10 @@ def with_image(fn):
 			img = img.convert('RGBA').convert('P', palette=Image.ADAPTIVE)
 
 		try:
-		    img.save(args[0], quality=95, **img.info)
+			img.save(args[0], quality=95, **img.info)
 		except IOError:
-		    ImageFile.MAXBLOCK = img.size[0] * img.size[1]
-		    img.save(args[0], quality=95, **img.info)
+			ImageFile.MAXBLOCK = img.size[0] * img.size[1]
+			img.save(args[0], quality=95, **img.info)
 
 	return process
 
