@@ -100,7 +100,8 @@ class LocalImageStorage(ImageStorage):
 
 	def get_image_url(self, hash):
 		# XXX check for a setting
-		return settings.MEDIA_URL + "/" + hash
+		prefix = settings.IMAGE_PATH_PREFIX if 'IMAGE_PATH_PREFIX' in settings else ''
+		return settings.MEDIA_URL + prefix + "/" + hash
 
 
 	def get_required_settings(self):

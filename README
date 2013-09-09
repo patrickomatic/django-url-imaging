@@ -77,6 +77,7 @@ Local Image Storage
 
 * ``IMAGE_STORAGE_DIR`` (optional) – The full path to the directory where images should be stored if this is not set, the value is inherited from MEDIA_ROOT. This directory should be publicly accessible since the application doesn't serve images directly from it.
 
+* ``IMAGE_PATH_PREFIX`` (optional) - A path that is prepended to the path of the processed image.
 
 SCP
 ~~~
