@@ -101,7 +101,7 @@ def sanitize_url(url):
 
 
 def valid_image_path(url):
-	return re.match(r'^(http://?)?[\w\-\.]+\.\w+/.+$', url, re.I)
+	return re.match(r'^(http://?)?[\w\-\.]+\.\w+(\:\d+)/.+$', url, re.I)
 
 
 class ImageNotFoundException(Exception):
