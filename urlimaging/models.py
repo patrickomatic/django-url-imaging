@@ -70,7 +70,7 @@ class ModifiedImage(models.Model):
 
 
 	def delete(self):
-		settings.IMAGE_STORAGE.delete_image(self.hash)
+		settings.IMAGE_STORAGE.delete_image(image)
 
 		models.Model.delete(self)
 
@@ -85,6 +85,9 @@ class ModifiedImage(models.Model):
 
 	def get_absolute_url(self):
 		return '/' + self.operations + self.site.domain_name + self.original_location
+
+	def hashed_filename(self):
+		return "%s%s" % (self.hash, self.ext)
 
 	def __unicode__(self):
 		return self.get_absolute_url()
@@ -113,7 +116,6 @@ class CommandRunner:
 		self.todo = []
 		self.url = ""
 		self.filename = ""
-		self.hashed_filename = ""
 		self.ext = ""
 		self.hash = ""
 		self.operations = ""
@@ -145,7 +147,6 @@ class CommandRunner:
 
 			self.hash = hashlib.sha224(self.operations + latin1_to_ascii(url)).hexdigest()
 			self.filename = file_location(self.hash, self.ext)
-			self.hashed_filename = "%s%s" % (self.hash, self.ext)
 		else:
 			self.todo = []
 
@@ -251,7 +252,7 @@ class CommandRunner:
 				except ValueError as e:
 					break
 
-			settings.IMAGE_STORAGE.save_image(self.hashed_filename, self.filename)
+			settings.IMAGE_STORAGE.save_image(image)
 			image.size = os.path.getsize(self.filename)
 
 			os.unlink(self.filename)
@@ -259,4 +260,4 @@ class CommandRunner:
 		if check_remote_image:
 			image.save()
 
-		return settings.IMAGE_STORAGE.get_image_url(self.hashed_filename)
+		return settings.IMAGE_STORAGE.get_image_url(image)
