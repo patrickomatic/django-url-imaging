@@ -167,7 +167,7 @@ class CommandRunner:
 		try:
 			remote = urllib2.build_opener().open(request)
 		except urllib2.HTTPError as e:
-			if e.code == 404: raise ImageNotFoundException()
+			if e.code >= 400 and e.code < 500: raise ImageNotFoundException()
 			# 304 Not Modified
 			return False
 		except urllib2.URLError as e:
