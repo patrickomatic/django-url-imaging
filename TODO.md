@@ -9,3 +9,4 @@ Version 0.4.5:
 	- [ ] Allow the use of relative URLs
 	- [ ] Maybe additional logging if in DEBUG that tells why there was a failure
 	- [ ] Make it configurable so that it can either return a redirect or image data directly
+	- [ ] Tests
