@@ -252,7 +252,7 @@ class CommandRunner:
 				except ValueError as e:
 					break
 
-			settings.IMAGE_STORAGE.save_image(image)
+			settings.IMAGE_STORAGE.save_image(image, self.filename)
 			image.size = os.path.getsize(self.filename)
 
 			os.unlink(self.filename)
