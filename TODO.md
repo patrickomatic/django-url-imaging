@@ -6,4 +6,6 @@ Version 0.5.0:
 
 Version 0.4.5:
 	- [ ] Add support for a configurable tmp/ directory in models.file_location()
+	- [ ] Allow the use of relative URLs
+	- [ ] Maybe additional logging if in DEBUG that tells why there was a failure
 	- [ ] Make it configurable so that it can either return a redirect or image data directly
