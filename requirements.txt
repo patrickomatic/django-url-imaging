@@ -1,1 +1,2 @@
-pil
+PIL
+django
