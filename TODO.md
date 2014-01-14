@@ -1,1 +1,2 @@
 - [ ] Python 3 Support
+- [ ] Support for Pillow (not sure if this works with Python 3?)
