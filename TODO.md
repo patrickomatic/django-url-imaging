@@ -1,2 +1,4 @@
-- [ ] Python 3 Support
 - [ ] Support for Pillow (not sure if this works with Python 3?)
+- [ ] Python 3 Support
+- [ ] Add support for a configurable tmp/ directory in models.file_location()
+- [ ] Make it configurable so that it can either return a redirect or image data directly
