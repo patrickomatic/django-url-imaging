@@ -60,8 +60,6 @@ Local Image Storage
 
 * ``IMAGE_STORAGE_BACKEND`` – This parameter should be set to 'LocalImageStorage' for the local image storage backend.
 
-* ``IMAGE_WHITELIST_FN`` – A function which takes a url as an argument and uses that to decide whether or not to allow it to be processed.  By default it is defined as ``lambda url: settings.MEDIA_URL in url`` which will allow for processing any images in your ``MEDIA_URL`` directory.
-
 * ``IMAGE_STORAGE_DIR`` (optional) – The full path to the directory where images should be stored if this is not set, the value is inherited from MEDIA_ROOT. This directory should be publicly accessible since the application doesn't serve images directly from it.
 
 
@@ -89,6 +87,8 @@ django-url-imaging adds the following custom command to the project's django-adm
 
 Additional Configuration
 ------------------------
+
+* ``IMAGE_WHITELIST_FN`` – A function which takes a url as an argument and uses that to decide whether or not to allow it to be processed.  By default it is defined as ``lambda url: settings.MEDIA_URL in url`` which will allow for processing any images in your ``MEDIA_URL`` directory.
 
 * ``MEDIA_URL`` – If you're using the LocalImageStorage backend, setting this parameter gives the root url that serves images stored in the ``IMAGE_STORAGE_DIR``
 
